@@ -26,6 +26,7 @@ This is a "getting started" project that introduces a few key ideas:
 * Think first, then code. We start by understanding the problem,
   and *then* we develop a strategy for solving the problem, and only
   *then* we start writing Python code to solve the problem.  
+
   Sometimes we might write tiny snippets of Python code to check the
   feasibility of an idea, but the real programming doesn't start
   until we have a solution strategy mapped out.
@@ -43,6 +44,7 @@ This is a "getting started" project that introduces a few key ideas:
   correctness. Beautiful, clear code tends to be recycled into new
   programs. Tangled, obscure, unnecessarily complicated code has a
   short path to the trash heap.
+
 
 In addition it introduces two common patterns for computational
 problem solving:
@@ -74,18 +76,16 @@ by Tribune Content Agency, LLC, and published in a
 number of
 newspapers. It is often titled
 "That scrambled word game."  
+
 Here is an example, copyright
 Tribune Content Agency and used here
 under fair use provisions of U.S.
 Copyright Law for educational purposes:
 
-![An example puzzle with jumbled words "kawea", "chirb", "pintac"
-"nsyawk".](
-img/jumble.png "Daily Jumble (example). (c) 2022 Tribune Content Agency")
-
-[Caption: "Unscramble these Jumbles, one letter to each square, to 
+![An example puzzle with jumbled words.  Caption: "Unscramble these Jumbles, one letter to each square, to 
 form ordinary words."  The jumbled words are "KAWEA", "CHIRB", 
-"PINTAC", and "NSYAWK".]
+"PINTAC", and "NSYAWK".](
+img/jumble.png "Daily Jumble (example). (c) 2022 Tribune Content Agency")
 
 You will construct a program to solve one of the anagrams in a Jumble.
 For example, the first anagram in the puzzle illustrated
@@ -135,7 +135,7 @@ sorted("KAWEA")
 sorted("AWAKE")
 ```
 
-If you execute those two lines in IDLE, you should see something
+If you execute those two lines in IDLE or a Python console, you should see something
 like this:
 
 ```commandline
@@ -156,20 +156,26 @@ compare these lists and determine whether they are equal:
 sorted("KAWEA") == sorted("AWAKE")
 ```
 
-Try it in IDLE (or the console of your favorite IDE). You should see 
-this:
+Try it in IDLE (or the console of your favorite IDE). For example, I can start a "terminal" window in VS code: 
+
+![Creating a terminal window in VS Code.  Open the terminal menu and choose "new terminal"](img/VS-C-terminal.png)
+
+Then you can start the Python interpreter (this is what makes it a "console") and type the commands you want to try: 
 
 ```commandline
+volo:jumbler michal$ python3
+Python 3.13.5 (v3.13.5:6cb20a219a8, Jun 11 2025, 12:23:45) [Clang 16.0.0 (clang-1600.0.26.6)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
 >>> sorted("KAWEA") == sorted("AWAKE")
-    True
+True
+>>> 
 ```
 
 So now we have a good strategy:
 
 * Sort the letters in anagram.
 * Compare to _a sorted version of_ each word in the dictionary.
-* If they are equal, we will produce the original, unsorted version
-  of the dictionary word.
+* If they are equal, we will produce the original, unsorted version of the dictionary word.
 
 Easy peasy!  But still, we won't do it all at once. We always,
 always, always want to build programs little bit by little bit,
@@ -251,21 +257,31 @@ note of other students (not instructors, teaching assistants, or
 learning assistants) who helped you in some way. Crediting your
 collaborators and helpers is crucial!   See the course policy on
 collaboration and credit to be sure you are doing this correctly and
-are not in danger of committing academic dishonesty.
+are not in danger of committing academic dishonesty.  If you use generative AI to draft some parts of the code, document as you would a human collaborator, e.g., 
+
+```python
+"""
+... 
+Credits: 
+A. Nother Student, And Another:  Sketched pseudocode together
+Our Friend:  Helped debug
+Github copilot:  Generated initial code for opening file.
+"""
+```
 
 Next, let's write a very simple program that just reads each entry
 of the dictionary. If we look at the file `dict.txt`, we can see
 that each line is a single word. We can use the Python `open`
-function to prepare the file for reading.
+function to prepare the file for reading.  
 
 ```python
 dict_file = open("dict.txt")
 ```
 
-`open` is a built-in Python function. A function takes in zero or more
-arguments and produces zero or more results. In this case the input is
-a text string, `"dict.txt"`. The result is a file object. But what if
-the argument was not the name of a file in the current folder? Try this
+`open` is a built-in Python function. A function takes in zero or more _arguments_ and produces zero or more _results_.  Some functions may also have _effects_.  In this case the _argument_ is the file name represented as a text string, `"dict.txt"`.   (We'll elaborate on this below.)
+When we _call_ function `open` with a valid file name, it _returns_ a file object; this is its _result_.  
+But what if
+the file name argument was not the name of a file in the current folder? Try this
 in the
 Python shell:
 
@@ -273,13 +289,17 @@ Python shell:
 dict_file = open("words.txt")
 ```
 
-We don't have a file called "words.txt" in the current folder, so we
-should
-get an error message.
+We don't have a file called "words.txt" in the current folder, so we should get an error message: 
+
+```commandline
+Traceback (most recent call last):
+  File "<python-input-1>", line 1, in <module>
+    dict_file = open("words.txt")
+FileNotFoundError: [Errno 2] No such file or directory: 'words.txt'
+```
 
 Note that in addition to file `dict.txt`, we have a much shorter
-file `shortdict.txt`. If we need to debug our program (and we most
-likely will), it may be much easier to debug with a small word list
+file `shortdict.txt`. If we need to debug our program (usually we will), it may be much easier to debug with a small word list
 than a very large word list. So let's make the choice between the
 full dictionary and the shorter version very obvious and easy to
 change.
@@ -287,32 +307,34 @@ change.
 ```python
 DICT = "shortdict.txt"    # Short version for testing & debugging
 # DICT = "dict.txt"       # Full dictionary word list
-
-dict_file = open(DICT, "r")
 ```
 
-In the code above, we say that the second assignment to `DICT` is
-_commented out_. Now it is very easy to switch between short and 
-full versions.  
+We say that the second assignment to `DICT` is _commented out_. Now it is very easy to switch between short and full versions with a few keystrokes.  Now we can use this _variable_ in place of the _string literal_ `"dict.txt"` or `"shortdict.txt"`: 
+
+```python
+dict_file = open(DICT, "r", encoding="utf-8-sig")
+```
+
+This is a little more elaborate than the first version of our call to open a file above, with two additional arguments.  You can ignore the extra arguments and skip this paragraph for now as you work on the project.  Here's the lowdown if you'd like to understand them:  The `"r"` is short for "read", meaning that we are going to use the file for input and not change it.  It is optional because this is the default _mode_ for opening files, but including it may make the code a little clearer.  The third argument, `encoding="utf-8-sig"`, tells Python how the text is represented.  The `encoding` argument is usually not needed for plain English text, but can be important especially if the file contains special characters like ⚠️ or a script like 漢字 or 한글.  `"utf-8"` is a [Unicode](https://home.unicode.org/) representation, now used almost universally for web pages and many other documents, and the "-sig" suffix fixes a compatibility problem between Microsoft applications and some versions of Python on Windows computers.   
+
 
 ## Global constants 
 
 Note the convention of using ALL CAPS to indicate
-that some variable name like `DICT` is a global 
-constant.  This means a value that is set in one place,
+that some variable name like `DICT` is a _global 
+constant_.  This means a value that is set in one place,
 and may be used (but not changed) elsewhere in the program code.
 
-Global variables should be used very sparingly, because they can 
+Global variables should be used very sparingly, because they can
 make programs more difficult to read, debug, and modify.  They 
-are not a good way to communicate values between functions.  When we 
+are not a good way to communicate values between functions.  When we
 do use global variables, they are usually either well-known 
 constants like _pi_ (π) or _e_, or at least variables that are 
 "constant" in the sense that we will not alter them during program 
 execution. 
 
 Global constant declarations should be placed as early in the
-code as possible (but after the header docstring), where they are 
-easy to find. They should
+code as possible (but after the header docstring), where they are easy to find. They should
 generally be accompanied by a comment explaining their purpose. 
 
 We have not capitalized `dict_file` in the same way, and we will not 
@@ -338,13 +360,13 @@ In Python the easiest way to read each line of text from a file is
 with a `for` loop, like this:
 
 ```python
-dict_file = open(DICT, "r")
+dict_file = open(DICT, "r", encoding="utf-8-sig")
 for line in dict_file:
     pass
 ```
 Although technically the "head" of the loop is 
 `for line in dict_file:`, we 
-think of the line with `open` as almost part of the loop.  
+think of the line with `open` almost as part of the loop.  
 There is no point in opening the file unless we intend to read the 
 file, and it is not possible to loop through the file without 
 opening it.    We therefore want to keep these lines of code 
@@ -358,7 +380,7 @@ do whatever we want with one line of text from the file. Let's print
 each line.
 
 ```python
-dict_file = open(DICT, "r")
+dict_file = open(DICT, "r", encoding="utf-8-sig")
 for line in dict_file:
     print(line)
 ```
@@ -395,8 +417,7 @@ need
 to discard it.
 
 Fortunately Python provides a built-in tool for discarding control
-characters at the beginning and end of a string. Try this in the Python
-shell:
+characters at the beginning and end of a string. Try this in the Python console: 
 
 ```python
 ("  \n word \n").strip()
@@ -426,14 +447,14 @@ The way we call `strip()` is a little confusing. Why is it
 `strip` is a special kind of function called a "method". We can't apply
 it to every kind of data, but only to strings. In fact, we call it a
 "method" of the string (`str`) data type. When we type `"xxx".strip()`,
-Python determines that "xxx" is a string, and it looks inside the string
-"class" to find a "method" called "strip". A different type of data
+Python determines that "xxx" is a string, and it looks inside the `str` 
+_class_ to find a _method_ called `strip`. A different type of data
 might
-have a completely different method called "strip", or none at all. If
+have a completely different method called `strip`, or none at all. If
 we try to call "strip" on an integer, for example, Python will complain
 that
 the `int` type doesn't have a "strip" method. Try this in the Python
-shell:
+console:
 
 ```python
 (42).strip()
@@ -450,7 +471,7 @@ the dictionary file, let's modify our loop to print each word with just
 the parts we want to keep:
 
 ```python
-dict_file = open(DICT, "r")
+dict_file = open(DICT, "r", encoding="utf-8-sig")
 for line in dict_file:
     word = line.strip()
     print(word)
@@ -464,9 +485,9 @@ Now we should get what we expected:
 
 Now that we can scan a dictionary word list, it's time to add
 checking logic. But remember:  Code a little, test a little.   
-While our final strategy is to compare a _normalized_ (and in fact 
+While our final strategy is to compare a _normalized_ (or 
 _canonical_) version of the
-anagram to a _canonical_ version of the dictionary word, we can
+anagram to a _normalized_ version of the dictionary word, we can
 start with a simpler version:  We'll check for an exact match. For
 example, if we look for the word "gamma", our program should print
 "gamma", but if we look for "nosuchword", our program
@@ -504,7 +525,7 @@ def find(anagram: str):
   >>> find("nosuchword")
   
   """
-  dict_file = open(DICT, "r")
+  dict_file = open(DICT, "r", encoding="utf-8-sig")
   for line in dict_file:
         word = line.strip()
         if word == anagram:
@@ -525,7 +546,7 @@ if __name__ == "__main__":
 
 ```
 
-Try putting these parts together, and execute the file in Idle. We 
+Try putting these parts together, and execute the file in Idle, VS Code, or whatever development environment you are using. We 
 should see something like this: 
 
 ```commandline
@@ -813,8 +834,7 @@ if __name__ == "__main__":
 ```
 
 Now we have a program that prompts for an anagram, and prints the 
-matching words.  We can rerun it in the Idle shell by 
-typing `main()`.  
+matching words.  We can rerun it in the Idle shell or Python console by typing `main()`.  
 
 Let's try it for each of the jumbles from the Daily Jumble example 
 above: 
